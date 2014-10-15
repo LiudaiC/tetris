@@ -12,13 +12,13 @@
 	<body>
 		<div id="tetris-main">
 			<c:forEach begin="1" end="200" varStatus="t">
-					<div class="main-cell">${t.index }</div>
+					<div class="main-cell" id="gamecell${t.index }">${t.index }</div>
 					<c:if test="${t.index % 10 == 0 }"><br/></c:if>
 			</c:forEach>
 		</div>
 		<div id="tetris-tool">
 			<div id="tetris-repository">
-				<c:forEach begin="1" end="16" varStatus="r">
+				<c:forEach begin="1" end="8" varStatus="r">
 					<div class="main-cell" id="canvas${r.index }"></div>
 					<c:if test="${r.index%4 == 0 }"><br/></c:if>
 				</c:forEach>
@@ -52,7 +52,6 @@
 					tetris.dropDown();
 				}
 			});
-			
 		});
 	</script>
 </html>

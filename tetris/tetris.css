@@ -20,7 +20,7 @@
 			}
 			#tetris-repository{
 				width: 120px;
-				height: 120px;
+				height: 60px;
 				margin-top: 15px;
 			}
 			#tetris-score{
@@ -44,8 +44,9 @@
 			}
 			.tblock{
 				background-color: yellow;
-				transform: rotate(60deg);
+				/* transform: rotate(60deg); */
 			}
+			.rotate{transform: rotate(60deg);}
 			.oblock{
 				background-color: blue;
 			}
