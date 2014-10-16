@@ -33,25 +33,24 @@
 	</body>
 	<script type="text/javascript">
 		$(function(){
-		/* 	if(location.href.indexOf("mytetris")<0){
-				window.open ('tetris.jsp?mytetris', 'aa', 
-						'top=0,left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no');
-				window.close();
-			} */
 			$("body").keydown(function(e){
 				if(e.keyCode == 38){
 					tetris.rotate();
 				}
 				if(e.keyCode == 37){
-					tetris.moveLeft();
+					tetris.moveTowards(moveLeft);
 				}
 				if(e.keyCode == 39){
-					tetris.moveRight();					
+					tetris.moveTowards(moveRight);			
 				}
 				if(e.keyCode == 40){
 					tetris.dropDown();
 				}
 			});
 		});
+		var constantNO = 0;
+		var moveLeft = -1;
+		var moveRight = 1;
+		var drop = 0;
 	</script>
 </html>
