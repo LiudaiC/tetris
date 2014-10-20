@@ -4,13 +4,45 @@ var tetris = {
 	blockclass : [ "tblock", "oblock", "lblock", "jblock", "iblock", "zblock",
 			"sblock" ],
 	blockcolor : "",
+	mcolor: "",
 	targetblock: null,
 	targetblockId: [],
-	full: [][],
-
+	full: [],
+	ginterval: null,
+	cinterval: null,
+	GameOver: false,
 	begin : function() {
 		this.ranBlock();
 		this.createBlockInGameBoard();
+		this.ranBlock();
+		this.interval = setInterval(function(){
+			tetris.dropDown();
+		},800);
+		clock.interval = setInterval(function(){
+			clock.clockRun();
+		}, 1000);
+	},
+	
+	pause: function(){
+		$("#pause").text("继续");
+		clearInterval(this.interval);
+		clearInterval(clock.interval);
+	},
+	
+	gamecontinue: function(){
+		$("#pause").text("暂停");
+		this.interval = setInterval(function(){
+			tetris.dropDown();
+		},800);
+		clock.interval = setInterval(function(){
+			clock.clockRun();
+		}, 1000);
+	},
+	
+	gameover: function(){
+		clearInterval(this.interval);
+		clearInterval(clock.interval);
+		this.GameOver = true;
 	},
 	
 	ranBlock: function(){
@@ -23,59 +55,72 @@ var tetris = {
 		case 0:
 			_this.nextblock = tblock.origin;
 			_this.blockcolor = _this.blockclass[0];
-			_this.targetblockId = tblock.mblock.concat();
-			_this.targetblock = tblock;
 			break;
 		case 1:
 			_this.nextblock = oblock.origin;
 			_this.blockcolor = _this.blockclass[1];
-			_this.targetblockId = oblock.mblock.concat();
-			_this.targetblock = oblock;
 			break;
 		case 2:
 			_this.nextblock = lblock.origin;
 			_this.blockcolor = _this.blockclass[2];
-			_this.targetblockId = lblock.mblock.concat();
-			_this.targetblock = lblock;
 			break;
 		case 3:
 			_this.nextblock = jblock.origin;
 			_this.blockcolor = _this.blockclass[3];
-			_this.targetblockId = jblock.mblock.concat();
-			_this.targetblock = jblock;
 			break;
 		case 4:
 			_this.nextblock = iblock.origin;
 			_this.blockcolor = _this.blockclass[4];
-			_this.targetblockId = iblock.mblock.concat();
-			_this.targetblock = iblock;
 			break;
 		case 5:
 			_this.nextblock = zblock.origin;
 			_this.blockcolor = _this.blockclass[5];
-			_this.targetblockId = zblock.mblock.concat();
-			_this.targetblock = zblock;
 			break;
 		case 6:
 			_this.nextblock = sblock.origin;
 			_this.blockcolor = _this.blockclass[6];
-			_this.targetblockId = sblock.mblock.concat();
-			_this.targetblock = sblock;
 			break;
 		}
 		$(_this.nextblock).addClass(_this.blockcolor+"");
 	},
 	
 	createBlockInGameBoard: function(){
-		drop = 0;
 		constantNO = 0;
-		var bcolor = this.blockcolor;
-		$(this.nextblock).removeClass(bcolor+"");
-		var tgblockId = this.targetblockId;
-		var tgblock = this.targetblock;
-		$(this.genIdStr(tgblockId)).addClass(bcolor+"");
-		var ddd = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-		$(this.genIdStr(ddd)).each(function(){console.log($(this).hasClass(bcolor+""))})
+		var _this = this;
+		_this.mcolor = _this.blockcolor;
+		var bclass = _this.blockclass;
+		switch (_this.mcolor){
+		case bclass[0]:
+			_this.targetblockId = tblock.mblock.concat();
+		_this.targetblock = tblock;
+			break;
+		case bclass[1]:
+			_this.targetblockId = oblock.mblock.concat();
+		_this.targetblock = oblock;
+			break;
+		case bclass[2]:
+			_this.targetblockId = lblock.mblock.concat();
+		_this.targetblock = lblock;
+			break;
+		case bclass[3]:
+			_this.targetblockId = jblock.mblock.concat();
+		_this.targetblock = jblock;
+			break;
+		case bclass[4]:
+			_this.targetblockId = iblock.mblock.concat();
+		_this.targetblock = iblock;
+			break;
+		case bclass[5]:
+			_this.targetblockId = zblock.mblock.concat();
+		_this.targetblock = zblock;
+			break;
+		case bclass[6]:
+			_this.targetblockId = sblock.mblock.concat();
+		_this.targetblock = sblock;
+			break;
+		}
+		var tgblockId = _this.targetblockId;
+		$(_this.genIdStr(tgblockId)).addClass(_this.mcolor+"");
 	},
 	
 	genIdStr: function(mblock){
@@ -90,7 +135,7 @@ var tetris = {
 		var tgblockId = this.targetblockId;
 		var tgblock = this.targetblock;
 		if(tgblock.hasOwnProperty("r1") && this.canRotate()){
-			$(this.genIdStr(tgblockId)).removeClass(this.blockcolor+"");
+			$(this.genIdStr(tgblockId)).removeClass(this.mcolor+"");
 			var j = tgblock.hasOwnProperty("r3") ? constantNO%4 : constantNO%2;
 			var r;
 			if(j == 0){
@@ -109,38 +154,44 @@ var tetris = {
 				tgblockId[i] += r[i];
 			}
 			constantNO++;
-			$(this.genIdStr(tgblockId)).addClass(this.blockcolor+"");
+			$(this.genIdStr(tgblockId)).addClass(this.mcolor+"");
 		}
 	},
 	
 	moveTowards: function(derection){
 		var tgblockId = this.targetblockId;
 		var tgblock = this.targetblock;
-		$(this.genIdStr(tgblockId)).removeClass(this.blockcolor+"");
-		for(var i=0;i<4;i++){
-			tgblockId[i] += derection;
-		}
+		$(this.genIdStr(tgblockId)).removeClass(this.mcolor+"");
+		
 		if(!this.canMove(derection)){
 			for(var i=0;i<4;i++){
-				tgblockId[i] -= derection;
+				tgblockId[i] += derection;
 			}
 		}
-		$(this.genIdStr(tgblockId)).addClass(this.blockcolor+"");
+		$(this.genIdStr(tgblockId)).addClass(this.mcolor+"");
 	}, 
 	
 	canMove: function(d){
 		var canmove = true;
 		var moveto;
+		var hasblock;
 		for(var i=0;i<4;i++){
-			moveto = this.targetblockId[i];
-			if((d > 0 && (moveto - 1)%10 == 0)
-					|| (d < 0 && (moveto + 1)%10 == 1)
-					|| (d == 0 && $(this.gamecell + moveto).css("background-color") != "rgba(0, 0, 0, 0)")){
-				drop = 20;
+			moveto = d==0 ? this.targetblockId[i]+10 : this.targetblockId[i];
+			hasblock = $(this.gamecell + moveto).css("background-color") != "rgb(255, 255, 255)";
+			if((d > 0 && ((moveto - 1)%10 == 0 || hasblock))
+					|| (d < 0 && ((moveto + 1)%10 == 1 || hasblock))
+					|| (d == 0 && hasblock)){
 				canmove = false;
 				break;
 			}
 		}
+		if($("#gamecell5").css("background-color") != "rgb(255, 255, 255)" 
+				|| $("#gamecell6").css("background-color") != "rgb(255, 255, 255)"
+				|| $("#gamecell4").css("background-color") != "rgb(255, 255, 255)"){
+			canmove = false;
+			this.gameover();
+		}
+
 		return canmove;
 	},
 	
@@ -158,20 +209,89 @@ var tetris = {
 	},
 	
 	dropDown: function(){
+		if(this.GameOver)return;
 		var tgblockId = this.targetblockId;
 		var tgblock = this.targetblock;
-		$(this.genIdStr(tgblockId)).removeClass(this.blockcolor+"");
-		for(var i=0;i<4;i++){
-			tgblockId[i] += 10;
-		}
-		if(!this.canMove(0)){
+		$(this.genIdStr(tgblockId)).removeClass(this.mcolor+"");
+		var candrop = this.canMove(0);
+		if(candrop){
 			for(var i=0;i<4;i++){
-				tgblockId[i] -= 10;
+				tgblockId[i] += 10;
 			}
 		}
-		$(this.genIdStr(tgblockId)).addClass(this.blockcolor+"");
-		
+		$(this.genIdStr(tgblockId)).addClass(this.mcolor+"");
+		if(!candrop){
+			this.calculate();
+			this.createBlockInGameBoard();
+			this.ranBlock();
+		}
 	},
+	
+	calculate: function(){
+		var quotient;//商
+		var remainder;//余数
+		var dividend = this.targetblockId;//被除数
+		var scoreBoard = this.full;
+		for(var i=0;i<4;i++){
+			quotient = dividend[i]%10 == 0 ? Math.floor(dividend[i]/10)-1 : Math.floor(dividend[i]/10);
+			remainder = dividend[i]%10 == 0 ? 9 : dividend[i]%10-1;
+			scoreBoard[quotient][remainder] = dividend[i];
+		}
+		var cal;
+		var destroy = [];
+		for(var i=19;i>-1;i--){
+			if(scoreBoard[i].length == 10){
+				var cal = true;
+				for(var j=9;j>-1;j--){
+					if(!scoreBoard[i][j]){
+						cal = false;
+						break;
+					}
+				}
+				if(cal){
+					destroy.push(scoreBoard[i][0]);
+					scoreBoard[i].forEach(function(item){
+						var obj = $("#gamecell"+item);
+						obj.removeClass(obj.attr("class")+"").addClass("main-cell");
+					});
+					scoreBoard[i] = [];
+				}
+			}
+		}
+		var dropall = [];
+		for(var i=19;i>-1;i--){
+			for(var j=9;j>-1;j--){
+				var m = scoreBoard[i][j];
+				if(m &&　destroy[0] && m<destroy[0]){
+					dropall.push(m);
+					m += 10;
+					scoreBoard[i+1][j] = m;
+					scoreBoard[i][j] = 0;
+				}
+			}
+		}
+		var len = dropall.length;
+		for(var i=0;i<len;i++){
+			var str = $("#gamecell"+dropall[i]).attr("class");
+			var strl = $("#gamecell"+(dropall[i]+10*destroy.length)).attr("class");
+			$("#gamecell"+dropall[i]).removeClass(str+"").addClass("main-cell");
+			$("#gamecell"+(dropall[i]+10*destroy.length)).removeClass(strl+"").addClass(str+"");
+		}
+		if(destroy.length == 1){
+			score += 10;
+		}
+		if(destroy.length == 2){
+			score += 20;
+		}
+		if(destroy.length == 3){
+			score += 40;
+		}
+		if(destroy.length == 4){
+			score += 80;
+		}
+		$("#tetris-score").text(score);
+	}
+	
 	
 };
 var tblock = {
@@ -222,3 +342,17 @@ var sblock = {
 	r1: [-20, -11, 0, 9],
 	r2: [20, 11, 0, -9]
 };
+var clock = {
+	interval:null,
+	//运行动态电子时钟
+	clockRun: function () {
+		clockStart++;
+		var m = clock.checkTime(Math.floor(clockStart/60));
+		var s = clock.checkTime(clockStart%60);
+		$("#tetris-timmer").html(m+":"+s);
+	},
+	// 时、分、秒小于10时在前面添加0
+	checkTime: function (i) {
+		return i<10 ? "0"+i : i;
+	}
+}

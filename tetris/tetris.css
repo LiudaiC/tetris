@@ -24,12 +24,16 @@
 				margin-top: 15px;
 			}
 			#tetris-score{
+				font-size: large;
+				text-align: center;
 			}
 			#tetris-btn{
 			margin-top: 228px;
 			text-align: center;
 			}
 			#tetris-timmer{
+				font-size: large;
+				text-align: center;
 			}
 			.main-cell{
 				border: 1px solid #c3c3c3;
@@ -38,15 +42,14 @@
 				width: 28px;
 				display: inline;
 				float:left;
+				background-color: white;
 			}
 			.tblock, .oblock, .lblock, .jblock, .iblock, .zblock, .sblock{
 				border: 1px solid #c3c3c3;
 			}
 			.tblock{
 				background-color: yellow;
-				/* transform: rotate(60deg); */
 			}
-			.rotate{transform: rotate(60deg);}
 			.oblock{
 				background-color: blue;
 			}
