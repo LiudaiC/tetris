@@ -26,6 +26,7 @@
 			<div id="tetris-btn">
 				<button id="begin" onclick="tetris.begin()">开始</button>
 				<button id="pause">暂停</button>
+				<p></p>
 			</div>
 		</div>
 	</body>
